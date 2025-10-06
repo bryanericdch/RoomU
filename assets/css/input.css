@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+@theme {
+    --color-jungle: #29ab87;
+    --shadow-image-login: inset 0 0 50px 70px rgb(0 0 0 / 50%);
+    --font-inter: "Inter", sans-serif;
+    --color-roomu-white: #FAF9F6;
+    --color-body: #ECF2F8;
+    --color-roomu-black: #36454F;
+}

@@ -1,0 +1,34 @@
+# Node modules
+node_modules/
+
+# Tailwind build output (if you’re compiling to an output.css)
+/assets/css/output.css
+
+# Build folders (if you later bundle or minify)
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS / System files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor files
+.vscode/
+.idea/
+*.swp
+
+# Composer (if ever used in PHP)
+vendor/
+
+# Cache / Temp files
+*.cache
+*.tmp
