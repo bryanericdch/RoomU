@@ -1,4 +1,4 @@
-asfasdfsdafds# 🏫 Room-U: Classroom Availability and Scheduling System
+# 🏫 Room-U: Classroom Availability and Scheduling System
 
 **Room-U** is a web-based system designed to help schools manage classroom availability, schedules, and occupancy efficiently.  
 It enables **admins**, **instructors**, and **students** to track and manage rooms in real-time, minimizing scheduling conflicts and ensuring smoother classroom operations.
