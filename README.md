@@ -1,3 +1,5 @@
+Testing Ruleset
+
 # 🏫 Room-U: Classroom Availability and Scheduling System
 
 **Room-U** is a web-based system designed to help schools manage classroom availability, schedules, and occupancy efficiently.  
