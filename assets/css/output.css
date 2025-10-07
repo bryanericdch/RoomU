@@ -7,29 +7,22 @@
       "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
       "Courier New", monospace;
-    --color-red-400: oklch(70.4% 0.191 22.216);
-    --color-amber-300: oklch(87.9% 0.169 91.605);
-    --color-amber-400: oklch(82.8% 0.189 84.429);
-    --color-blue-50: oklch(97% 0.014 254.604);
-    --color-blue-500: oklch(62.3% 0.214 259.815);
-    --color-gray-50: oklch(98.5% 0.002 247.839);
-    --color-gray-400: oklch(70.7% 0.022 261.325);
-    --color-gray-500: oklch(55.1% 0.027 264.364);
-    --color-white: #fff;
     --spacing: 0.25rem;
     --text-3xl: 1.875rem;
     --text-3xl--line-height: calc(2.25 / 1.875);
     --font-weight-semibold: 600;
     --font-weight-bold: 700;
     --font-weight-extrabold: 800;
-    --radius-sm: 0.25rem;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     --default-font-family: var(--font-sans);
     --default-mono-font-family: var(--font-mono);
-    --color-jungle: #29ab87;
+    --color-body: #ECF2F8;
     --font-inter: "Inter", sans-serif;
     --color-roomu-white: #FAF9F6;
-    --color-body: #ECF2F8;
     --color-roomu-black: #36454F;
+    --color-roomu-green: #29ab87;
+    --color-hover-roomu-green: #278a6a;
   }
 }
 @layer base {
@@ -193,29 +186,20 @@
   .m-0 {
     margin: calc(var(--spacing) * 0);
   }
-  .m-\[15px\] {
-    margin: 15px;
-  }
   .mt-\[5px\] {
     margin-top: 5px;
   }
   .mt-\[10px\] {
     margin-top: 10px;
   }
+  .mt-\[15px\] {
+    margin-top: 15px;
+  }
   .mt-\[30px\] {
     margin-top: 30px;
   }
-  .mb-\[0px\] {
-    margin-bottom: 0px;
-  }
   .mb-\[20px\] {
     margin-bottom: 20px;
-  }
-  .mb-\[30px\] {
-    margin-bottom: 30px;
-  }
-  .mb-\[70px\] {
-    margin-bottom: 70px;
   }
   .ml-\[5px\] {
     margin-left: 5px;
@@ -225,6 +209,26 @@
   }
   .table {
     display: table;
+  }
+  .login-button {
+    height: 58px;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 15px;
+    background-color: var(--color-roomu-green);
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+    --tw-duration: 200ms;
+    transition-duration: 200ms;
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-hover-roomu-green);
+      }
+    }
+    &:active {
+      opacity: 90%;
+    }
   }
   .h-\[13\%\] {
     height: 13%;
@@ -253,12 +257,6 @@
   .w-\[18\.75em\] {
     width: 18.75em;
   }
-  .w-\[35\%\] {
-    width: 35%;
-  }
-  .w-\[65\%\] {
-    width: 65%;
-  }
   .w-\[90\%\] {
     width: 90%;
   }
@@ -273,6 +271,9 @@
   }
   .border-collapse {
     border-collapse: collapse;
+  }
+  .cursor-pointer {
+    cursor: pointer;
   }
   .resize {
     resize: both;
@@ -292,9 +293,6 @@
   .justify-end {
     justify-content: flex-end;
   }
-  .justify-start {
-    justify-content: flex-start;
-  }
   .rounded-\[15px\] {
     border-radius: 15px;
   }
@@ -302,29 +300,11 @@
     border-style: var(--tw-border-style);
     border-width: 1px;
   }
-  .bg-amber-400 {
-    background-color: var(--color-amber-400);
-  }
-  .bg-body {
-    background-color: var(--color-body);
-  }
-  .bg-jungle {
-    background-color: var(--color-jungle);
+  .bg-roomu-green {
+    background-color: var(--color-roomu-green);
   }
   .bg-roomu-white {
     background-color: var(--color-roomu-white);
-  }
-  .bg-\[url\(\/assets\/img\/Image\.png\)\] {
-    background-image: url(/assets/img/Image.png);
-  }
-  .bg-cover {
-    background-size: cover;
-  }
-  .bg-center {
-    background-position: center;
-  }
-  .bg-no-repeat {
-    background-repeat: no-repeat;
   }
   .px-\[20px\] {
     padding-inline: 20px;
@@ -375,14 +355,67 @@
   .underline {
     text-decoration-line: underline;
   }
-  .shadow-image-login {
-    --tw-shadow: inset 0 0 50px 70px var(--tw-shadow-color, rgb(0 0 0 / 50%));
-    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
-  }
   .outline {
     outline-style: var(--tw-outline-style);
     outline-width: 1px;
   }
+  .select-none {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .focus\:outline {
+    &:focus {
+      outline-style: var(--tw-outline-style);
+      outline-width: 1px;
+    }
+  }
+  .focus\:outline-0 {
+    &:focus {
+      outline-style: var(--tw-outline-style);
+      outline-width: 0px;
+    }
+  }
+}
+@layer base {
+  body {
+    background-color: var(--color-body);
+    font-family: var(--font-inter);
+    color: var(--color-roomu-black);
+  }
+}
+@layer components {
+  @media (min-width: 768px) {
+    .login-image-section {
+      display: flex;
+      justify-content: start;
+      width: 65%;
+      background-image: url(/assets/img/Image.png);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      box-shadow: inset 0 0 50px 70px rgb(0 0 0 / 50%);
+    }
+    .login-roomu-logo {
+      display: flex;
+      width: auto;
+      height: 13%;
+      align-items: center;
+      justify-content: center;
+      margin: 15px;
+      padding-inline: 20px;
+    }
+    .form {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      width: 35%;
+    }
+  }
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
 }
 @property --tw-border-style {
   syntax: "*";
@@ -393,71 +426,6 @@
   syntax: "*";
   inherits: false;
 }
-@property --tw-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-shadow-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-shadow-alpha {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
-@property --tw-inset-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-inset-shadow-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-inset-shadow-alpha {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
-@property --tw-ring-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-ring-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-inset-ring-color {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-inset-ring-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
-@property --tw-ring-inset {
-  syntax: "*";
-  inherits: false;
-}
-@property --tw-ring-offset-width {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
-}
-@property --tw-ring-offset-color {
-  syntax: "*";
-  inherits: false;
-  initial-value: #fff;
-}
-@property --tw-ring-offset-shadow {
-  syntax: "*";
-  inherits: false;
-  initial-value: 0 0 #0000;
-}
 @property --tw-outline-style {
   syntax: "*";
   inherits: false;
@@ -466,22 +434,9 @@
 @layer properties {
   @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
     *, ::before, ::after, ::backdrop {
+      --tw-duration: initial;
       --tw-border-style: solid;
       --tw-font-weight: initial;
-      --tw-shadow: 0 0 #0000;
-      --tw-shadow-color: initial;
-      --tw-shadow-alpha: 100%;
-      --tw-inset-shadow: 0 0 #0000;
-      --tw-inset-shadow-color: initial;
-      --tw-inset-shadow-alpha: 100%;
-      --tw-ring-color: initial;
-      --tw-ring-shadow: 0 0 #0000;
-      --tw-inset-ring-color: initial;
-      --tw-inset-ring-shadow: 0 0 #0000;
-      --tw-ring-inset: initial;
-      --tw-ring-offset-width: 0px;
-      --tw-ring-offset-color: #fff;
-      --tw-ring-offset-shadow: 0 0 #0000;
       --tw-outline-style: solid;
     }
   }
