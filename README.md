@@ -56,5 +56,4 @@ Room-U aims to:
 
 ---
 
-## 🗂️ Folder Structure
 
