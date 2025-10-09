@@ -4,11 +4,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/output.css">
     <title>RoomU &vert; Administrator</title>
 </head>
 
-<body>
-    <p>Sample</p>
+<body class="h-screen flex flex-col">
+
+    <header class="bg-roomu-green h-[100px] w-full
+    flex justify-between relative">
+        <!--Logo-->
+        <div class="w-[256px] h-full flex items-center justify-center ml-3">
+            <img src="/assets/img/phinma_white.png">
+        </div>
+
+        <!--Date and Time-->
+        <div class="absolute left-89 w-[300px] h-full
+        flex items-center justify-between">
+            <div class="text-roomu-white font-bold text-[36px]">
+                11:11 AM
+            </div>
+            <div class="text-roomu-white flex  flex-col font-bold text-[16px]">
+                <div>Sunday</div>
+                <div>January 07, 2025</div>
+            </div>
+        </div>
+
+        <!--Profile-->
+        <div class="flex items-center justify-between mr-[30px] w-[180px]">
+            <div class="text-roomu-white font-bold">Administrator</div>
+            <div class="bg-roomu-white rounded-full w-[60px] h-[60px] flex center-div">
+                <img class="w-[40px] h-[40px]" src="/assets//icons/admin_icon.svg">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex flex-1 h-screen">
+        <!--Side Navigation-->
+        <nav class="w-[200px] flex-none flex flex-col items-end mt-[30px]">
+            <div class="navi-item">
+                <div class="navi-icon"><img src="/assets/icons/dashboard_icon.png"></div>
+                <div class="text-roomu-white">Dashboard</div>
+            </div>
+
+            <div>Instructors</div>
+
+            <div>Management</div>
+        </nav>
+
+
+    </main>
+
+
 </body>
 
 </html>
