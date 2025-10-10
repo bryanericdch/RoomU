@@ -5,3 +5,45 @@
       SELECT c.checkin_id, cl.schedule_end 
       FROM checkins c JOIN classes cl ON c.class_id=cl.class_id 
       WHERE c.status='active' AND NOW() >= CONCAT(CURDATE(), ' ', cl.schedule_end
+
+
+
+
+
+
+
+.........................................
+Inter Google Font link:
+<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+
+
+
+
+
+
+
+.......................
+    // In <script> tag or script.js
+    function updateClock() {
+        const now = new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' });
+        document.getElementById('current-time').textContent = now;
+    }
+    setInterval(updateClock, 1000);  // Updates every second
+    updateClock();  // Initial call
+    
+..........................................
+
+    // AJAX Status Refresh (e.g., every 30s on dashboard)
+    if (document.querySelector('.dashboard')) {
+        setInterval(() => {
+            fetch('/refresh_statuses.php')
+                .then(res => res.json())
+                .then(data => {
+                    // Update room elements, e.g., document.getElementById('room-101').textContent = data.status;
+                });
+        }, 30000);
+    }

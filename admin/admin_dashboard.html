@@ -18,48 +18,73 @@
     <header class="bg-roomu-green h-[100px] w-full
     flex justify-between relative">
         <!--Logo-->
-        <div class="w-[256px] h-full flex items-center justify-center ml-3">
+        <section class="w-[256px] h-full flex items-center justify-center ml-3">
             <img src="/assets/img/phinma_white.png">
-        </div>
+        </section>
 
         <!--Date and Time-->
-        <div class="absolute left-89 w-[300px] h-full
+        <section class="absolute left-89 w-[300px] h-full
         flex items-center justify-between">
-            <div class="text-roomu-white font-bold text-[36px]">
-                11:11 AM
+            <div class="text-roomu-white font-bold text-[36px]" id="current-time">
+                11:11 AM<!-- <?php echo date('g:i A', strtotime('Asia/Manila')); ?> -->
             </div>
             <div class="text-roomu-white flex  flex-col font-bold text-[16px]">
-                <div>Sunday</div>
-                <div>January 07, 2025</div>
+                <div id="current-day">Sunday</div> <!--<?php echo date('l', strtotime('Asia/Manila')); ?>-->
+                <div id="current-date">January 07, 2025</div>
+                <!--<?php echo date('F j, Y', strtotime('Asia/Manila')); ?>-->
             </div>
-        </div>
+        </section>
 
         <!--Profile-->
-        <div class="flex items-center justify-between mr-[30px] w-[180px]">
+        <section class="flex items-center justify-between mr-[30px] w-[180px]">
             <div class="text-roomu-white font-bold">Administrator</div>
             <div class="bg-roomu-white rounded-full w-[60px] h-[60px] flex center-div">
                 <img class="w-[40px] h-[40px]" src="/assets//icons/admin_icon.svg">
             </div>
-        </div>
+        </section>
     </header>
 
-    <main class="flex flex-1 h-screen">
+    <section class="flex flex-1 h-screen">
         <!--Side Navigation-->
         <nav class="w-[200px] flex-none flex flex-col items-end mt-[30px]">
-            <div class="navi-item">
-                <div class="navi-icon"><img src="/assets/icons/dashboard_icon.png"></div>
-                <div class="text-roomu-white">Dashboard</div>
-            </div>
+            <a href="/admin/admin_dashboard.html" class="nav-item bg-roomu-green text-roomu-white">
+                <div class="nav-icon"><img src="/assets/icons/dashboard_icon.png"></div>
+                <p>Dashboard</p>
+            </a>
 
-            <div>Instructors</div>
 
-            <div>Management</div>
+            <a href="/admin/admin_instructors.html" class="nav-item">
+                <div class="nav-icon"><img class="w-[24px] h-[24px]" src="/assets/icons/instructors_icon.svg"></div>
+                <p>Instructors</p>
+            </a>
+
+
+            <a href="/admin/admin_management.html" class="nav-item">
+                <div class="nav-icon"><img src="/assets/icons/management_icon.svg" class="w-[24px] h-[24px]"></div>
+                <p>Management</p>
+            </a>
         </nav>
 
 
-    </main>
+        <!--Main Content-->
+        <main class="flex w-full h-full">
+            <section class="flex w-[40%] h-full items-center justify-center">
+                <div class="shadow-container rounded-[10px] w-[70%] h-[95%] flex items-start justify-center p-[20px]">
+                    <ul>
+                        <li>Building1</li>
+                        <li>Building2</li>
+                    </ul>
+                </div>
+            </section>
 
 
+            <section></section>
+        </main>
+
+    </section>
+
+
+    <script src="/assets/js/clock.js"></script>
 </body>
 
 </html>
