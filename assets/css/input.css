@@ -34,7 +34,7 @@
     }
 
     .nav-item {
-        @apply flex px-3 py-2 justify-between items-center w-[160px] rounded-[10px] cursor-pointer hover:bg-hover-roomu-green transition-colors border-transparent hover:border-roomu-green;
+        @apply flex px-3 py-2 justify-between items-center w-[160px] rounded-[10px] cursor-pointer hover:bg-hover-roomu-green transition-colors duration-300 ease-in-out border-transparent hover:border-roomu-green;
     }
 
     .nav-icon {

@@ -46,7 +46,7 @@ function populateRooms(buildingId) {
                         : 'text-yellow-600';
 
             const li = document.createElement('li');
-            li.className = 'flex items-center justify-between p-3 rounded-md hover:bg-hover-roomu-green cursor-pointer';
+            li.className = 'flex items-center justify-between p-3 rounded-md hover:bg-hover-roomu-green cursor-pointer transition duration-200 ease-in-out';
             li.setAttribute('data-room-id', room.id);
             li.setAttribute('data-action', 'select-room');
 
