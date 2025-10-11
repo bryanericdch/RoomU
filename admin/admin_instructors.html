@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/output.css">
+    <title>RoomU &vert; Administrator</title>
+</head>
+
+<body class="h-screen flex flex-col">
+
+    <header class="w-full h-[100px] bg-roomu-green flex justify-between relative flex-none">
+        <!--Logo-->
+        <section class="w-[256px] h-full flex items-center justify-center ml-3">
+            <img src="/assets/img/phinma_white.png">
+        </section>
+
+        <!--Date and Time-->
+        <section class="absolute left-89 w-[300px] h-full flex items-center justify-between">
+            <div class="text-roomu-white font-bold text-[36px]" id="current-time">
+                11:11 AM <!-- <?php echo date('g:i A', strtotime('Asia/Manila')); ?> -->
+            </div>
+            <div class="text-roomu-white flex flex-col font-bold text-[16px]">
+                <div id="current-day">Sunday</div> <!--<?php echo date('l',strtotime('Asia/Manila')); ?>-->
+                <div id="current-date">January 07, 2025</div>
+                <!--<?php echo date('F j, Y', strtotime('Asia/Manilan')); ?>-->
+            </div>
+        </section>
+
+        <!--Profile-->
+        <section class="flex items-center justify-between  mr-[30px] w-[180px]">
+            <div class="text-roomu-white font-bold">Administrator</div>
+            <div class="bg-roomu-white rounded-full w-[60px] h-[60px] flex  center-div">
+                <img src="/assets/icons/admin_icon.svg" class="w-[40px] h-[40px]">
+            </div>
+        </section>
+    </header>
+
+
+    <section class="flex flex-1 overflow-hidden">
+        <!--Side Navigation-->
+        <nav class="w-[200px] h-full flex-none flex flex-col justify-around items-end ">
+            <div>
+                <a href="/admin/admin_dashboard.html" class="nav-item ">
+                    <div class="nav-icon"><img src="/assets/icons/dashboard_icon.png"></div>
+                    <p>Dashboard</p>
+                </a>
+
+                <a href="/admin/admin_instructors.html" class="nav-item bg-roomu-green text-roomu-white">
+                    <div class="nav-icon"><img src="/assets/icons/instructors_icon.svg" class="w-[24px] h-[24px]"></div>
+                    <p>Instructors</p>
+                </a>
+
+                <a href="/admin/admin_management.html" class="nav-item">
+                    <div class="nav-icon"><img src="/assets/icons/management_icon.svg" class="w-[24px] h-[24px]"></div>
+                    <p>Management</p>
+                </a>
+            </div>
+
+            <img src="/assets/img/upang.png" class="w-auto ">
+        </nav>
+
+
+        <!--Main Content-->
+        <main class="flex w-full h-full">
+            <section class="flex w-[20%] h-full items-center justify-end mr-10 ml-10">
+
+                <!--Departments Section-->
+                <div id="departments-section"
+                    class="shadow-container rounded-[10px] w-full h-[80%] flex items-stretch justify-start p-[20px]">
+                    <ul class="space-y-3 w-full" role="list">
+
+                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full transition duration-200 ease-in-out"
+                            data-department-id="1" data-action="select-department">
+
+                            <a href="#" class="text-lg font-medium  flex-1">
+                                CITE
+                            </a>
+
+                            <div class="flex items-center space-x-2 ml-4">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3"><img src="/assets/icons/instructors_icon.svg"></span>
+                                    <span class="ml-1 text-xs">23</span>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full transition duration-200 ease-in-out"
+                            data-department-id="2" data-action="select-department">
+
+                            <a href="#" class="text-lg font-medium flex-1">
+                                CAHS
+                            </a>
+
+                            <div class="flex items-center space-x-2 ml-4">
+                                <div class="flex items-center">
+                                    <span class="w-3 h-3"><img src="/assets/icons/instructors_icon.svg"></span>
+                                    <span class="ml-1 text-xs  font-medium">17</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!--Instructors Section-->
+            <section class="w-[70%] h-full items-center justify-around flex flex-col">
+                <div id="instructors-section"
+                    class="col-span-1 shadow-container rounded-lg p-6 w-full h-[80%] flex flex-col overflow-hidden">
+                    <div class="flex justify-between text-roomu-black font-bold border-b border-gray-200 pb-2 mb-3">
+                        <div class="w-1/4">Instructors</div>
+                        <div class="w-1/5">Room No.</div>
+                        <div class="w-1/4">Class</div>
+                        <div class="w-1/4 text-center">Schedule</div>
+                    </div>
+
+                    <ul id="instructors-list" class="space-y-2 overflow-y-auto flex-1">
+                        <li
+                            class="flex justify-between items-center bg-gray-50 rounded-md pd-3 hover:bg-hover-roomu-green">
+                            <div class="w-1/4">Dale Doe</div>
+                            <div class="w-1/5">PTC-403</div>
+                            <div class="w-1/4">BSIT2-05</div>
+                            <div class="w-1/4 text-center">10:30 AM - 12:00 PM</div>
+                        </li>
+
+                        <li
+                            class="flex justify-between items-center bg-gray-50 rounded-md pd-3 hover:bg-hover-roomu-green">
+                            <div class="w-1/4">Gina Cole</div>
+                            <div class="w-1/5">RS-714</div>
+                            <div class="w-1/4">BSAR2-03</div>
+                            <div class="w-1/4 text-center">10:30 AM - 12:00 PM</div>
+                        </li>
+
+                        <li
+                            class="flex justify-between items-center bg-gray-50 rounded-md pd-3 hover:bg-hover-roomu-green">
+                            <div class="w-1/4">Empoy Muwashans</div>
+                            <div class="w-1/5">-</div>
+                            <div class="w-1/4">-</div>
+                            <div class="w-1/4 text-center">-</div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+        </main>
+
+
+    </section>
+
+
+
+
+    <script src="/assets/js/clock.js"></script>
+    <script src="/assets//js/admin_instructors.js"></script>
+
+    <script>
+        // Sample Data (Replace with AJAX to PHP later, e.g., fetch('/get_buildings.php'))
+        const sampleData = {
+            1: [
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Dale Doe", room: "PTC-403", class: "BSIT2-05", schedule: "10:30 AM - 12:00 PM" },
+                { name: "Gina Cole", room: "RS-714", class: "BSMT3-07", schedule: "1:00 PM - 2:30 PM" },
+                { name: "Empoy Muwashans" }
+                // no class → will auto display "-"
+            ],
+            2: [
+                { name: "Hiquiana, Bryan Eric D.", room: "RS-201", class: "BSPsych1-02", schedule: "8:00 AM - 9:30 AM" },
+                { name: "Brian Cruz" } // no class yet
+            ]
+        };
+    </script>
+</body>
+
+</html>

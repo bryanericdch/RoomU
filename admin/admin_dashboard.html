@@ -16,7 +16,7 @@
 <body class="h-screen flex flex-col">
 
     <header class="bg-roomu-green h-[100px] w-full
-    flex justify-between relative">
+    flex justify-between relative flex-none">
         <!--Logo-->
         <section class="w-[256px] h-full flex items-center justify-center ml-3">
             <img src="/assets/img/phinma_white.png">
@@ -44,37 +44,39 @@
         </section>
     </header>
 
-    <section class="flex flex-1 h-screen">
+    <section class="flex flex-1 overflow-hidden">
         <!--Side Navigation-->
-        <nav class="w-[200px] flex-none flex flex-col items-end mt-[30px]">
-            <a href="/admin/admin_dashboard.html" class="nav-item bg-roomu-green text-roomu-white">
-                <div class="nav-icon"><img src="/assets/icons/dashboard_icon.png"></div>
-                <p>Dashboard</p>
-            </a>
+        <nav class="w-[200px] h-full flex-none flex flex-col justify-around items-end ">
+            <div>
+                <a href="/admin/admin_dashboard.html" class="nav-item bg-roomu-green text-roomu-white">
+                    <div class="nav-icon"><img src="/assets/icons/dashboard_icon.png"></div>
+                    <p>Dashboard</p>
+                </a>
 
+                <a href="/admin/admin_instructors.html" class="nav-item">
+                    <div class="nav-icon"><img src="/assets/icons/instructors_icon.svg" class="w-[24px] h-[24px]"></div>
+                    <p>Instructors</p>
+                </a>
 
-            <a href="/admin/admin_instructors.html" class="nav-item">
-                <div class="nav-icon"><img class="w-[24px] h-[24px]" src="/assets/icons/instructors_icon.svg"></div>
-                <p>Instructors</p>
-            </a>
+                <a href="/admin/admin_management.html" class="nav-item">
+                    <div class="nav-icon"><img src="/assets/icons/management_icon.svg" class="w-[24px] h-[24px]"></div>
+                    <p>Management</p>
+                </a>
+            </div>
 
-
-            <a href="/admin/admin_management.html" class="nav-item">
-                <div class="nav-icon"><img src="/assets/icons/management_icon.svg" class="w-[24px] h-[24px]"></div>
-                <p>Management</p>
-            </a>
+            <img src="/assets/img/upang.png" class="w-auto ">
         </nav>
 
 
         <!--Main Content-->
-        <main class="flex w-full h-full">
+        <main class="flex w-full h-full justify-center">
             <section class="flex w-[40%] h-full items-center justify-center">
-
+                <!--Buildings Section-->
                 <div id="buildings-section"
-                    class="shadow-container rounded-[10px] w-[90%] h-[95%] flex items-stretch justify-start p-[20px]">
+                    class="shadow-container rounded-[10px] w-[90%] h-[80%] flex items-stretch justify-start p-[20px]">
                     <ul class="space-y-3 w-full" role="list">
 
-                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full"
+                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full transition duration-200 ease-in-out"
                             data-building-id="1" data-action="select-building">
 
                             <a href="#" class="text-lg font-medium text-roomu-black flex-1">
@@ -97,7 +99,7 @@
                             </div>
                         </li>
 
-                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full"
+                        <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full transition duration-200 ease-in-out"
                             data-building-id="2" data-action="select-building">
 
                             <a href="#" class="text-lg font-medium text-roomu-black flex-1">
@@ -134,11 +136,12 @@
 
 
 
-
-            <section class="w-[50%] h-full items-center justify-around flex flex-col">
-                <div id="rooms-section" class="col-span-1 shadow-container rounded-lg p-6 w-full h-[95%]">
+            <!--Rooms Section-->
+            <section class="w-[40%] h-full items-center justify-center flex flex-col">
+                <div id="rooms-section"
+                    class="col-span-1 shadow-container rounded-lg p-6 w-full h-[80%] flex flex-col overflow-hidden">
                     <h2 id="rooms-heading" class="text-xl font-bold text-roomu-black mb-4">Rooms</h2>
-                    <ul class="space-y-2" role="list" id="rooms-list">
+                    <ul class="space-y-2 overflow-y-auto flex-1" role="list" id="rooms-list">
                         <!-- JS populates this -->
                         <li class="text-roomu-black italic">Select a building to view rooms</li>
                     </ul>
@@ -176,6 +179,18 @@
             buildings: [
                 {
                     id: 1, name: 'PTC', available: 5, occupied: 2, maintenance: 1, rooms: [
+                        { id: 1, name: 'PTC-403', status: 'available' },
+                        { id: 2, name: 'PTC-404', status: 'occupied' },
+                        { id: 3, name: 'PTC-405', status: 'maintenance' },
+                        { id: 1, name: 'PTC-403', status: 'available' },
+                        { id: 2, name: 'PTC-404', status: 'occupied' },
+                        { id: 3, name: 'PTC-405', status: 'maintenance' },
+                        { id: 1, name: 'PTC-403', status: 'available' },
+                        { id: 2, name: 'PTC-404', status: 'occupied' },
+                        { id: 3, name: 'PTC-405', status: 'maintenance' },
+                        { id: 1, name: 'PTC-403', status: 'available' },
+                        { id: 2, name: 'PTC-404', status: 'occupied' },
+                        { id: 3, name: 'PTC-405', status: 'maintenance' },
                         { id: 1, name: 'PTC-403', status: 'available' },
                         { id: 2, name: 'PTC-404', status: 'occupied' },
                         { id: 3, name: 'PTC-405', status: 'maintenance' },
