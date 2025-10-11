@@ -1,0 +1,7 @@
+  // auto_checkout.php (run every minute)
+  date_default_timezone_set('Asia/Manila');
+  $pdo = new PDO(...);
+  $stmt = $pdo->query("
+      SELECT c.checkin_id, cl.schedule_end 
+      FROM checkins c JOIN classes cl ON c.class_id=cl.class_id 
+      WHERE c.status='active' AND NOW() >= CONCAT(CURDATE(), ' ', cl.schedule_end

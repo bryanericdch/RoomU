@@ -8,6 +8,7 @@
     --color-roomu-green: #29ab87;
     --color-hover-roomu-green: #278a6a;
     --shadow-image-login: inset 0 0 50px 70px rgb(0 0 0 / 50%);
+    --shadow-input-box: 0 0 50px 1px rgb(0 0 0 / 10%);
 }
 
 @layer base {
@@ -19,37 +20,28 @@
 }
 
 @layer components {
-    @media (min-width: 768px) {
-        .login-image-section {
-            display: flex;
-            justify-content: start;
-            width: 65%;
-            background-image: url(/assets/img/Image.png);
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            box-shadow: inset 0 0 50px 70px rgb(0 0 0 / 50%);
-        }
+    .login-image-section {
+        @apply flex justify-start w-[65%] bg-[url(/assets/img/Image.png)] bg-cover bg-center bg-no-repeat;
+    }
 
-        .login-roomu-logo {
-            display: flex;
-            width: auto;
-            height: 13%;
-            align-items: center;
-            justify-content: center;
-            margin: 15px;
-            padding-inline: 20px;
-        }
+    .login-roomu-logo {
+        @apply flex w-auto h-[13%] items-center justify-center m-[15px] px-[20px];
+    }
 
-        .form {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            width: 35%;
-        }
+    .form {
+        @apply flex flex-col justify-between items-center w-[35%];
+    }
+
+    .navi-item {
+        @apply flex;
+    }
+
+    .navi-icon {
+        @apply bg-roomu-white rounded-[15px]
     }
 }
+
+
 
 @utility login-button {
     @apply bg-roomu-green w-full h-[58px] rounded-[15px] cursor-pointer transition-colors duration-200;
@@ -61,4 +53,8 @@
     @variant active {
         @apply opacity-90;
     }
+}
+
+@utility center-div {
+    @apply items-center justify-center
 }
