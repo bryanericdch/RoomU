@@ -22,11 +22,11 @@
 
 @layer components {
     .login-image-section {
-        @apply flex justify-start w-[65%] bg-[url(/assets/img/Image.png)] bg-cover bg-center bg-no-repeat;
+        @apply flex flex-col justify-between w-[65%] h-full bg-[url(/assets/img/Image.png)] bg-cover bg-center bg-no-repeat;
     }
 
     .login-roomu-logo {
-        @apply flex w-auto h-[13%] items-center justify-center m-[15px] px-[20px];
+        @apply flex w-auto h-[13%] items-center justify-start m-[4px] px-[20px];
     }
 
     .form {
@@ -40,7 +40,13 @@
     .nav-icon {
         @apply bg-roomu-white rounded-[5px] p-1;
     }
+
+    .selected {
+        background-color: #DCFCE7;
+        border-left: 4px solid #16A34A;
+    }
 }
+
 
 
 
