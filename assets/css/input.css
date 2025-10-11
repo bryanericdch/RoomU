@@ -6,8 +6,10 @@
     --color-roomu-white: #FAF9F6;
     --color-roomu-black: #36454F;
     --color-roomu-green: #29ab87;
-    --color-hover-roomu-green: #278a6a;
+    --color-hover-roomu-green: rgb(41 171 135 / 30%);
     --shadow-image-login: inset 0 0 50px 70px rgb(0 0 0 / 50%);
+    --shadow-input-box: 0 0 50px 1px rgb(0 0 0 / 10%);
+    --shadow-container: 0 0 10px 0 rgb(0 0 0 /20%);
 }
 
 @layer base {
@@ -19,37 +21,34 @@
 }
 
 @layer components {
-    @media (min-width: 768px) {
-        .login-image-section {
-            display: flex;
-            justify-content: start;
-            width: 65%;
-            background-image: url(/assets/img/Image.png);
-            background-position: center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            box-shadow: inset 0 0 50px 70px rgb(0 0 0 / 50%);
-        }
+    .login-image-section {
+        @apply flex flex-col justify-between w-[65%] h-full bg-[url(/assets/img/Image.png)] bg-cover bg-center bg-no-repeat;
+    }
 
-        .login-roomu-logo {
-            display: flex;
-            width: auto;
-            height: 13%;
-            align-items: center;
-            justify-content: center;
-            margin: 15px;
-            padding-inline: 20px;
-        }
+    .login-roomu-logo {
+        @apply flex w-auto h-[13%] items-center justify-start m-[4px] px-[20px];
+    }
 
-        .form {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            width: 35%;
-        }
+    .form {
+        @apply flex flex-col justify-between items-center w-[35%];
+    }
+
+    .nav-item {
+        @apply flex px-3 py-2 justify-between items-center w-[160px] rounded-[10px] cursor-pointer hover:bg-hover-roomu-green transition-colors border-transparent hover:border-roomu-green;
+    }
+
+    .nav-icon {
+        @apply bg-roomu-white rounded-[5px] p-1;
+    }
+
+    .selected {
+        background-color: #DCFCE7;
+        border-left: 4px solid #16A34A;
     }
 }
+
+
+
 
 @utility login-button {
     @apply bg-roomu-green w-full h-[58px] rounded-[15px] cursor-pointer transition-colors duration-200;
@@ -61,4 +60,8 @@
     @variant active {
         @apply opacity-90;
     }
+}
+
+@utility center-div {
+    @apply items-center justify-center
 }
