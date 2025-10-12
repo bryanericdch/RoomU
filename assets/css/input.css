@@ -45,6 +45,10 @@
         background-color: #DCFCE7;
         border-left: 4px solid #16A34A;
     }
+
+    .active-tab {
+        @apply bg-hover-roomu-green text-roomu-white transition duration-200;
+    }
 }
 
 
