@@ -198,11 +198,7 @@
                         <button id="close-sidebar"
                             class="text-gray-500 hover:text-roomu-green text-2xl font-bold cursor-pointer">&times;</button>
                     </div>
-                    <!-- This is for instructors dashboard-->
-                    <button id="checkin-btn"
-                        class="w-full mt-4 bg-roomu-green text-roomu-white py-2 px-4 rounded-md hover:bg-hover-roomu-green font-medium hidden">Check
-                        In to This Room
-                    </button>
+
                     <div id="sidebar-content" class="overflow-y-auto flex-1 space-y-4 text-roomu-black">
                         <p class="italic text-roomu-black">Select a room to view details.</p>
                     </div>
@@ -214,6 +210,8 @@
 
 
     <script src="/assets/js/clock.js"></script>
+    <script src="/assets/js/dashboard.js"></script>
+    <script src="/assets/js/logout.js"></script>
 
     <script>
         // Sample Data (Replace with AJAX to PHP later, e.g., fetch('/get_buildings.php'))
@@ -259,8 +257,58 @@
             }
         };
     </script>
-    <script src="/assets/js/dashboard.js"></script>
-    <script src="/assets/js/logout.js"></script>
+    <script>
+        // Small fallback to (re)enable the right-hand sidebar toggle/populate
+        (function () {
+            const roomsList = document.getElementById('rooms-list');
+            const detailsSidebar = document.getElementById('details-sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const closeSidebarBtn = document.getElementById('close-sidebar');
+            const sidebarContent = document.getElementById('sidebar-content');
+
+            if (!roomsList || !detailsSidebar || !sidebarOverlay || !closeSidebarBtn || !sidebarContent) return;
+
+            function openSidebarFor(roomId) {
+                // sampleData.roomDetails is defined earlier in this page
+                const details = (window.sampleData && window.sampleData.roomDetails && window.sampleData.roomDetails[roomId]) || null;
+                if (details) {
+                    sidebarContent.innerHTML = `
+                    <div class="space-y-2">
+                        <div><strong>Instructor:</strong> ${details.instructor || '-'}</div>
+                        <div><strong>Course / Section:</strong> ${details.courseSection || '-'}</div>
+                        <div><strong>Subject:</strong> ${details.subjectCode || '-'}</div>
+                        <div><strong>Schedule:</strong> ${details.schedule || '-'}</div>
+                    </div>
+                `;
+                } else {
+                    sidebarContent.innerHTML = '<p class="italic">No details available for this room.</p>';
+                }
+
+                detailsSidebar.classList.remove('translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+            }
+
+            function closeSidebar() {
+                detailsSidebar.classList.add('translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            }
+
+
+            roomsList.addEventListener('click', (e) => {
+                const li = e.target.closest('li[data-room-id]');
+                if (!li) return;
+                const roomId = li.getAttribute('data-room-id') || li.dataset.roomId;
+                if (!roomId) return;
+                openSidebarFor(roomId);
+            });
+
+            closeSidebarBtn.addEventListener('click', closeSidebar);
+            sidebarOverlay.addEventListener('click', closeSidebar);
+
+
+        })();
+    </script>
+
 </body>
 
 </html>
