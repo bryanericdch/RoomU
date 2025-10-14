@@ -132,7 +132,7 @@ function populateDetails(roomId) {
     // Show/hide check-in button
     if (room.status === 'available') {
         checkinBtn.classList.remove('hidden');
-        checkinBtn.onclick = () => alert(`Check-in for ${room.name} (integrate with PHP later)`);
+
     } else {
         checkinBtn.classList.add('hidden');
         checkinBtn.onclick = null;
