@@ -203,6 +203,40 @@
         </main>
     </main>
 
+    <!-- Check-in modal -->
+    <div id="modal-checkin" class="fixed inset-0 hidden items-center justify-center bg-black/40 z-50">
+        <div class="bg-white p-6 rounded w-[420px]">
+            <h4 class="font-bold mb-3">Check In to Room</h4>
+            <form id="checkin-form" class="space-y-3">
+                <div>
+                    <label class="block text-sm">Instructor</label>
+                    <input id="checkin-instructor" type="text" readonly class="w-full border p-2 rounded bg-gray-100" />
+                </div>
+
+                <div>
+                    <label class="block text-sm">Course</label>
+                    <select id="checkin-course" class="w-full border p-2 rounded"></select>
+                </div>
+
+                <div>
+                    <label class="block text-sm">Section</label>
+                    <select id="checkin-section" class="w-full border p-2 rounded"></select>
+                </div>
+
+                <div>
+                    <label class="block text-sm">Class</label>
+                    <select id="checkin-class" class="w-full border p-2 rounded"></select>
+                </div>
+
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="checkin-cancel" class="px-3 py-1 border rounded">Cancel</button>
+                    <button type="submit" id="checkin-submit" class="px-3 py-1 bg-roomu-green text-white rounded">Check
+                        In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <script src="/assets/js/clock.js"></script>
 
@@ -252,6 +286,7 @@
     </script>
     <script src="/assets/js/dashboard.js"></script>
     <script src="/assets/js/logout.js"></script>
+    <script src="/assets/js/instructor_checkin.js"></script>
 </body>
 
 </html>
