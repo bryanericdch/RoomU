@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS sections (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE,
     FOREIGN KEY (department_id) REFERENCES departments(department_id) ON DELETE CASCADE,
-    INDEX idx_sections_dept (department_id),
+    INDEX idx_sections_dept (department_id)
     
 );
 
