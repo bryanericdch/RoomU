@@ -285,9 +285,9 @@ if ($mode === 'change_password') {
                             <?php foreach ($instructors as $instr): ?>
                                 <li class="flex flex-col bg-gray-50 rounded-md p-3 hover:bg-hover-roomu-green cursor-pointer">
                                     <div class="flex justify-between w-full font-bold">
-                                        <div class="w-1/4"><?= htmlspecialchars($instr['full_name']) ?></div>
+                                        <div class="w-1/4"><?= htmlspecialchars($instr['full_name']) ?><span style="color: gray; font-size: 12px; font-weight:300;"> &vert; <?= htmlspecialchars($instr['department_name']) ?></span></div>
                                         <div class="w-1/4 text-center">Room</div>
-                                        <div class="w-1/4">Class</div>
+                                        <div class="w-1/4 text-center">Class</div>
                                         <div class="w-1/4 text-center">Schedule</div>
                                     </div>
 
@@ -299,7 +299,7 @@ if ($mode === 'change_password') {
                                             <div class="flex justify-between w-full mt-1 text-sm">
                                                 <div class="w-1/4">&nbsp;</div> <!-- empty for name column -->
                                                 <div class="w-1/4 text-center"><?= htmlspecialchars($cls['room_name']) ?></div>
-                                                <div class="w-1/4"><?= htmlspecialchars($cls['section_name'] . ' / ' . $cls['subject_code']) ?></div>
+                                                <div class="w-1/4 text-center"><?= htmlspecialchars($cls['section_name'] . ' / ' . $cls['subject_code']) ?></div>
                                                 <div class="w-1/4 text-center">
                                                     <?= date('g:i A', strtotime($cls['schedule_start'])) ?> -
                                                     <?= date('g:i A', strtotime($cls['schedule_end'])) ?>
@@ -337,7 +337,6 @@ if ($mode === 'change_password') {
     <script src="/assets/js/clock.js"></script>
     <script src="/assets/js/logout.js"></script>
     <script src="/assets/js/admin_changepassword.js"></script>
-
 </body>
 
 </html>

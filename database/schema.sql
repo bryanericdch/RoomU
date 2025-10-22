@@ -149,3 +149,16 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     INDEX idx_audit_action (action)
 );
 
+ALTER TABLE classes
+  ADD COLUMN instructor_id INT NOT NULL AFTER class_id;
+
+
+ALTER TABLE classes
+  ADD CONSTRAINT fk_classes_instructor
+  FOREIGN KEY (instructor_id) REFERENCES users(user_id)
+  ON DELETE CASCADE;
+
+
+  ALTER TABLE sections
+ADD COLUMN instructor_id INT NOT NULL,
+ADD FOREIGN KEY (instructor_id) REFERENCES users(user_id) ON DELETE CASCADE;
