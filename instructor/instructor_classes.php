@@ -93,7 +93,25 @@ $conn->query("
     SET r.status = 'available'
     WHERE '$currentTime' > c.schedule_end
       AND r.status != 'maintenance'
+
+    
 ");
+$conn->query("
+    DELETE classes, checkins
+    FROM classes 
+    LEFT JOIN checkins ON classes.class_id = checkins.class_id
+    WHERE TIME('$currentTime') > classes.schedule_end 
+    AND DATE(classes.created_at) = CURDATE()
+");
+$conn->query("
+    DELETE FROM subjects 
+    WHERE NOT EXISTS (
+        SELECT 1 
+        FROM classes 
+        WHERE classes.subject_id = subjects.subject_id
+    )
+");
+
 
 // 4️⃣ Reset maintenance rooms after midnight
 if ($currentTime >= '00:00:00' && $currentTime <= '00:10:00') {
@@ -105,19 +123,37 @@ if ($currentTime >= '00:00:00' && $currentTime <= '00:10:00') {
 // === FETCH CLASSES ========
 // ==========================
 if (isset($_GET['action']) && $_GET['action'] === 'fetch_classes') {
-    $result = $conn->query("
-        SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, 
-               r.room_id, r.room_name, r.status
-        FROM classes c
-        JOIN subjects s ON c.subject_id = s.subject_id
-        JOIN checkins ci ON ci.class_id = c.class_id
-        JOIN rooms r ON r.room_id = ci.room_id
-    ");
+    header('Content-Type: application/json');
 
-    $classes = [];
-    while ($row = $result->fetch_assoc()) {
-        $classes[] = $row;
+    $user_id = (int) ($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    if ($is_admin) {
+        $stmt = $conn->prepare("
+            SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, 
+                   r.room_id, r.room_name, r.status
+            FROM classes c
+            JOIN subjects s ON c.subject_id = s.subject_id
+            JOIN checkins ci ON ci.class_id = c.class_id
+            JOIN rooms r ON r.room_id = ci.room_id
+        ");
+    } else {
+        $stmt = $conn->prepare("
+            SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, 
+                   r.room_id, r.room_name, r.status
+            FROM classes c
+            JOIN subjects s ON c.subject_id = s.subject_id
+            JOIN checkins ci ON ci.class_id = c.class_id
+            JOIN rooms r ON r.room_id = ci.room_id
+            WHERE c.instructor_id = ?
+        ");
+        $stmt->bind_param('i', $user_id);
     }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $classes = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
 
     echo json_encode(['classes' => $classes]);
     exit;
@@ -129,21 +165,20 @@ if (isset($_GET['action']) && $_GET['action'] === 'fetch_classes') {
 
 // Add course
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_course') {
-    header('Content-Type: application/json');
     $name = trim($_POST['name'] ?? '');
     if ($name === '') {
-        echo json_encode(['success' => false, 'message' => 'Course name is required.']);
+        echo json_encode(['success' => false, 'message' => 'Course name is required']);
         exit;
     }
 
-    $stmt = $conn->prepare("INSERT INTO courses (name) VALUES (?)");
-    $stmt->bind_param('s', $name);
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+
+    $stmt = $conn->prepare("INSERT INTO courses (name, owner_id, created_at) VALUES (?, ?, NOW())");
+    $stmt->bind_param('si', $name, $user_id);
     $ok = $stmt->execute();
-    echo json_encode([
-        'success' => $ok,
-        'course' => ['course_id' => $stmt->insert_id, 'name' => $name]
-    ]);
     $stmt->close();
+
+    echo json_encode(['success' => $ok]);
     exit;
 }
 
@@ -185,8 +220,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 // Fetch all courses
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'courses') {
     header('Content-Type: application/json');
-    $result = $conn->query("SELECT course_id, name FROM courses ORDER BY name ASC");
-    echo json_encode($result->fetch_all(MYSQLI_ASSOC));
+
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    if ($is_admin) {
+        $stmt = $conn->prepare("
+            SELECT c.course_id, c.name, u.full_name as owner_name 
+            FROM courses c
+            LEFT JOIN users u ON c.owner_id = u.user_id 
+            ORDER BY c.name ASC
+        ");
+    } else {
+        $stmt = $conn->prepare("
+            SELECT course_id, name 
+            FROM courses 
+            WHERE owner_id = ? 
+            ORDER BY name ASC
+        ");
+        $stmt->bind_param('i', $user_id);
+    }
+
+    $stmt->execute();
+    $courses = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    echo json_encode($courses);
     exit;
 }
 
@@ -196,49 +255,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'courses'
 
 // Fetch sections for a course
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'sections') {
-    header('Content-Type: application/json');
-    $course_id = intval($_GET['course_id'] ?? 0);
-    $stmt = $conn->prepare("SELECT section_id, section_name FROM sections WHERE course_id = ? ORDER BY section_name ASC");
-    $stmt->bind_param('i', $course_id);
+    $course_id = (int)($_GET['course_id'] ?? 0);
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    $sql = "
+        SELECT s.* 
+        FROM sections s
+        JOIN courses c ON s.course_id = c.course_id
+        WHERE s.course_id = ? " .
+        (!$is_admin ? "AND c.owner_id = ?" : "");
+
+    $stmt = $conn->prepare($sql);
+
+    if ($is_admin) {
+        $stmt->bind_param('i', $course_id);
+    } else {
+        $stmt->bind_param('ii', $course_id, $user_id);
+    }
+
     $stmt->execute();
     $sections = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    echo json_encode($sections);
     $stmt->close();
+
+    echo json_encode($sections);
     exit;
 }
 
 // Add section
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'add_section') {
-    header('Content-Type: application/json');
-    $course_id = intval($_POST['course_id'] ?? 0);
+    $course_id = (int)($_POST['course_id'] ?? 0);
     $section_name = trim($_POST['section_name'] ?? '');
-    if ($course_id <= 0 || $section_name === '') {
-        echo json_encode(['success' => false, 'message' => 'Invalid input.']);
-        exit;
-    }
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
 
-    // Get department_id for the instructor
-    $stmtDept = $conn->prepare("SELECT department_id FROM users WHERE user_id = ?");
-    $stmtDept->bind_param("i", $_SESSION['user_id']);
-    $stmtDept->execute();
-    $deptRow = $stmtDept->get_result()->fetch_assoc();
-    $stmtDept->close();
-
-    if (!$deptRow || !$deptRow['department_id']) {
-        echo json_encode(['success' => false, 'message' => 'No department found for this instructor.']);
-        exit;
-    }
-    $department_id = $deptRow['department_id'];
-
-    $stmt = $conn->prepare("INSERT INTO sections (course_id, department_id, section_name) VALUES (?, ?, ?)");
-    $stmt->bind_param('iis', $course_id, $department_id, $section_name);
-    $ok = $stmt->execute();
-    echo json_encode([
-        'success' => $ok,
-        'message' => $ok ? 'Section added successfully.' : 'Database error.',
-        'section' => ['section_id' => $stmt->insert_id, 'section_name' => $section_name]
-    ]);
+    // Get instructor's department_id
+    $stmt = $conn->prepare("SELECT department_id FROM users WHERE user_id = ?");
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $user = $result->fetch_assoc();
+    $department_id = $user['department_id'];
     $stmt->close();
+
+    if ($section_name === '') {
+        echo json_encode(['success' => false, 'message' => 'Section name is required']);
+        exit;
+    }
+
+    if (!$department_id) {
+        echo json_encode(['success' => false, 'message' => 'Instructor must be assigned to a department']);
+        exit;
+    }
+
+    $stmt = $conn->prepare("INSERT INTO sections (course_id, section_name, instructor_id, department_id, created_at) VALUES (?, ?, ?, ?, NOW())");
+    $stmt->bind_param('isii', $course_id, $section_name, $user_id, $department_id);
+    $ok = $stmt->execute();
+    $stmt->close();
+
+    echo json_encode(['success' => $ok]);
     exit;
 }
 
@@ -366,18 +440,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'edit_
         exit;
     }
 
-    // Get class info
-    $stmt = $conn->prepare("SELECT subject_id FROM classes WHERE class_id=?");
-    $stmt->bind_param('i', $class_id);
-    $stmt->execute();
-    $class = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
 
-    if (!$class) {
+    // Ownership check
+    $stmtCheck = $conn->prepare("SELECT instructor_id, subject_id FROM classes WHERE class_id = ?");
+    $stmtCheck->bind_param('i', $class_id);
+    $stmtCheck->execute();
+    $res = $stmtCheck->get_result()->fetch_assoc();
+    $stmtCheck->close();
+
+    if (!$res) {
         echo json_encode(['success' => false, 'message' => 'Class not found.']);
         exit;
     }
-    $subject_id = $class['subject_id'];
+
+    if (!$is_admin && ((int)$res['instructor_id'] !== $user_id)) {
+        echo json_encode(['success' => false, 'message' => 'Permission denied.']);
+        exit;
+    }
+
+    $subject_id = $res['subject_id'];
 
     // Update subject code
     $stmt = $conn->prepare("UPDATE subjects SET subject_code=? WHERE subject_id=?");
@@ -407,16 +490,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'classes'
     header('Content-Type: application/json');
     $section_id = intval($_GET['section_id'] ?? 0);
 
-    $stmt = $conn->prepare("
-        SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, c.checkin_grace_minutes,
-               r.room_id, r.room_name, r.status
-        FROM classes c
-        JOIN subjects s ON c.subject_id = s.subject_id
-        LEFT JOIN checkins ch ON ch.class_id = c.class_id AND ch.status='active'
-        LEFT JOIN rooms r ON r.room_id = ch.room_id
-        WHERE c.section_id = ?
-    ");
-    $stmt->bind_param('i', $section_id);
+    $user_id = (int) ($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    if ($is_admin) {
+        $stmt = $conn->prepare("
+            SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, c.checkin_grace_minutes,
+                   r.room_id, r.room_name, r.status
+            FROM classes c
+            JOIN subjects s ON c.subject_id = s.subject_id
+            LEFT JOIN checkins ch ON ch.class_id = c.class_id AND ch.status='active'
+            LEFT JOIN rooms r ON r.room_id = ch.room_id
+            WHERE c.section_id = ?
+        ");
+        $stmt->bind_param('i', $section_id);
+    } else {
+        $stmt = $conn->prepare("
+            SELECT c.class_id, s.subject_code, c.schedule_start, c.schedule_end, c.checkin_grace_minutes,
+                   r.room_id, r.room_name, r.status
+            FROM classes c
+            JOIN subjects s ON c.subject_id = s.subject_id
+            LEFT JOIN checkins ch ON ch.class_id = c.class_id AND ch.status='active'
+            LEFT JOIN rooms r ON r.room_id = ch.room_id
+            WHERE c.section_id = ? AND c.instructor_id = ?
+        ");
+        $stmt->bind_param('ii', $section_id, $user_id);
+    }
+
     $stmt->execute();
     echo json_encode($stmt->get_result()->fetch_all(MYSQLI_ASSOC));
     $stmt->close();
@@ -432,6 +532,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
         exit;
     }
 
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    // Ownership check
+    $stmtOwner = $conn->prepare("SELECT instructor_id FROM classes WHERE class_id = ?");
+    $stmtOwner->bind_param('i', $class_id);
+    $stmtOwner->execute();
+    $owner = $stmtOwner->get_result()->fetch_assoc();
+    $stmtOwner->close();
+
+    if (!$owner) {
+        echo json_encode(['success' => false, 'message' => 'Class not found.']);
+        exit;
+    }
+
+    if (!$is_admin && ((int)$owner['instructor_id'] !== $user_id)) {
+        echo json_encode(['success' => false, 'message' => 'Permission denied.']);
+        exit;
+    }
+
+    // proceed with existing delete logic
     // Get subject_id and room_id
     $stmt = $conn->prepare("SELECT subject_id, room_id FROM classes c LEFT JOIN checkins ch ON c.class_id = ch.class_id AND ch.status='active' WHERE c.class_id = ?");
     $stmt->bind_param('i', $class_id);
@@ -484,50 +605,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
     exit;
 }
 
-
-// ==========================
-// === CLASS STATUS HANDLING
-// ==========================
-if (isset($_POST['action']) && $_POST['action'] === 'update_class_status') {
-    header('Content-Type: application/json');
-    $class_id = intval($_POST['class_id'] ?? 0);
-    $status = $_POST['status'] ?? '';
-    if (!$class_id || !$status) {
-        echo json_encode(['success' => false, 'message' => 'Missing class_id or status']);
-        exit;
-    }
-
-    // Get associated room_id
-    $stmt = $conn->prepare("SELECT room_id FROM checkins WHERE class_id = ? AND status='active' LIMIT 1");
-    $stmt->bind_param('i', $class_id);
-    $stmt->execute();
-    $res = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-
-    if (!$res || !$res['room_id']) {
-        echo json_encode(['success' => false, 'message' => 'No active checkin found for this class.']);
-        exit;
-    }
-    $room_id = $res['room_id'];
-
-    // Update room status
-    $stmt2 = $conn->prepare("UPDATE rooms SET status = ? WHERE room_id = ?");
-    $stmt2->bind_param('si', $status, $room_id);
-    $ok = $stmt2->execute();
-    $stmt2->close();
-
-    // If maintenance, reset class schedule
-    if ($status === 'maintenance') {
-        $stmt = $conn->prepare("UPDATE classes SET schedule_start='00:00:01', schedule_end='00:00:02' WHERE class_id=?");
-        $stmt->bind_param('i', $class_id);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    echo json_encode(['success' => $ok, 'room_id' => $room_id]);
-    exit;
-}
-
 // ==========================
 // === ROOM STATUS HANDLING ==
 // ==========================
@@ -570,6 +647,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'availabl
     exit;
 }
 
+// NEW: Fetch buildings list
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'buildings') {
+    header('Content-Type: application/json');
+    $result = $conn->query("SELECT building_id, name FROM buildings ORDER BY name ASC");
+    echo json_encode($result->fetch_all(MYSQLI_ASSOC));
+    exit;
+}
+
+// NEW: Fetch rooms for a specific building (includes active-checkin status)
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['fetch'] ?? '') === 'rooms_by_building') {
+    header('Content-Type: application/json');
+    $building_id = intval($_GET['building_id'] ?? 0);
+    if ($building_id <= 0) {
+        echo json_encode([]);
+        exit;
+    }
+
+    $stmt = $conn->prepare("
+        SELECT r.room_id, r.room_name,
+               CASE WHEN EXISTS (
+                   SELECT 1 FROM checkins c WHERE c.room_id = r.room_id AND c.status = 'active'
+               ) THEN 'checkedin' ELSE r.status END AS status
+        FROM rooms r
+        WHERE r.building_id = ?
+        ORDER BY r.room_name ASC
+    ");
+    $stmt->bind_param('i', $building_id);
+    $stmt->execute();
+    $rooms = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+    echo json_encode($rooms);
+    exit;
+}
+
 // --- Fetch instructor info ---
 $user_id = $_SESSION['user_id'];
 $stmt = $conn->prepare("SELECT full_name, email FROM users WHERE user_id = ?");
@@ -579,6 +691,70 @@ $user = $stmt->get_result()->fetch_assoc();
 
 $full_name = $user['full_name'];
 $email = $user['email'];
+
+
+// ==========================
+// === CLASS STATUS HANDLING
+// ==========================
+if (isset($_POST['action']) && $_POST['action'] === 'update_class_status') {
+    header('Content-Type: application/json');
+    $class_id = intval($_POST['class_id'] ?? 0);
+    $status = $_POST['status'] ?? '';
+    if (!$class_id || !$status) {
+        echo json_encode(['success' => false, 'message' => 'Missing class_id or status']);
+        exit;
+    }
+
+    $user_id = (int)($_SESSION['user_id'] ?? 0);
+    $is_admin = ($_SESSION['role'] ?? '') === 'admin';
+
+    // Ownership check
+    $stmtOwner = $conn->prepare("SELECT instructor_id FROM classes WHERE class_id = ?");
+    $stmtOwner->bind_param('i', $class_id);
+    $stmtOwner->execute();
+    $owner = $stmtOwner->get_result()->fetch_assoc();
+    $stmtOwner->close();
+
+    if (!$owner) {
+        echo json_encode(['success' => false, 'message' => 'Class not found.']);
+        exit;
+    }
+
+    if (!$is_admin && ((int)$owner['instructor_id'] !== $user_id)) {
+        echo json_encode(['success' => false, 'message' => 'Permission denied.']);
+        exit;
+    }
+
+    // Get associated room_id
+    $stmt = $conn->prepare("SELECT room_id FROM checkins WHERE class_id = ? AND status='active' LIMIT 1");
+    $stmt->bind_param('i', $class_id);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if (!$res || !$res['room_id']) {
+        echo json_encode(['success' => false, 'message' => 'No active checkin found for this class.']);
+        exit;
+    }
+    $room_id = $res['room_id'];
+
+    // Update room status
+    $stmt2 = $conn->prepare("UPDATE rooms SET status = ? WHERE room_id = ?");
+    $stmt2->bind_param('si', $status, $room_id);
+    $ok = $stmt2->execute();
+    $stmt2->close();
+
+    // If maintenance, reset class schedule
+    if ($status === 'maintenance') {
+        $stmt = $conn->prepare("UPDATE classes SET schedule_start='00:00:01', schedule_end='00:00:02' WHERE class_id=?");
+        $stmt->bind_param('i', $class_id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    echo json_encode(['success' => $ok, 'room_id' => $room_id]);
+    exit;
+}
 
 
 ?>
@@ -735,10 +911,16 @@ $email = $user['email'];
                         <input id="subject_code" name="subject_code" required class="w-full shadow-container p-2 rounded" />
                     </div>
                     <!-- Room selector -->
-                    <label class="block text-sm font-medium mt-2">Room</label>
-                    <select id="room_id" name="room_id" class="w-full border rounded p-2">
-                        <option value="">Loading rooms...</option>
+                    <label class="block text-sm font-medium mt-2">Building</label>
+                    <select id="building_id" name="building_id" class="w-full border rounded p-2 mb-2">
+                        <option value="">Loading buildings...</option>
                     </select>
+
+                    <label class="block text-sm font-medium">Room</label>
+                    <select id="room_id" name="room_id" class="w-full border rounded p-2">
+                        <option value="">Select building first</option>
+                    </select>
+
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-sm">Start time</label>
@@ -806,6 +988,84 @@ $email = $user['email'];
     <script src="/assets/js/logout.js"></script>
     <script src="/assets/js/instructor_classes.js"></script>
     <script src="/assets/js/instructor_passwordchange.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const buildingSelect = document.getElementById('building_id');
+            const roomSelect = document.getElementById('room_id');
+            const addClassBtn = document.getElementById('add-class');
+
+            function escapeHtml(str) {
+                return String(str || '').replace(/[&<>"']/g, function(s) {
+                    return ({
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;',
+                        "'": '&#39;'
+                    })[s];
+                });
+            }
+
+            function loadBuildings(selectedBuildingId = null) {
+                fetch('/instructor/instructor_classes.php?fetch=buildings')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!buildingSelect) return;
+                        buildingSelect.innerHTML = '<option value=\"\">Select building</option>';
+                        data.forEach(b => {
+                            const opt = document.createElement('option');
+                            opt.value = b.building_id;
+                            opt.textContent = b.name;
+                            buildingSelect.appendChild(opt);
+                        });
+                        if (selectedBuildingId) buildingSelect.value = selectedBuildingId;
+                        const bid = buildingSelect.value || (data[0] && data[0].building_id);
+                        if (bid) loadRooms(bid);
+                    })
+                    .catch(() => {
+                        if (buildingSelect) buildingSelect.innerHTML = '<option value=\"\">Failed to load</option>';
+                    });
+            }
+
+            function loadRooms(buildingId, selectedRoomId = null) {
+                if (!roomSelect) return;
+                roomSelect.innerHTML = '<option value=\"\">Loading rooms...</option>';
+                fetch('/instructor/instructor_classes.php?fetch=rooms_by_building&building_id=' + encodeURIComponent(buildingId))
+                    .then(res => res.json())
+                    .then(data => {
+                        roomSelect.innerHTML = '<option value=\"\">Select room</option>';
+                        data.forEach(rm => {
+                            const opt = document.createElement('option');
+                            opt.value = rm.room_id;
+                            opt.textContent = `${rm.room_name} (${rm.status})`;
+                            roomSelect.appendChild(opt);
+                        });
+                        if (selectedRoomId) roomSelect.value = selectedRoomId;
+                    })
+                    .catch(() => {
+                        roomSelect.innerHTML = '<option value=\"\">Failed to load rooms</option>';
+                    });
+            }
+
+            if (buildingSelect) {
+                buildingSelect.addEventListener('change', function() {
+                    const bid = this.value;
+                    if (bid) loadRooms(bid);
+                    else roomSelect.innerHTML = '<option value=\"\">Select building first</option>';
+                });
+            }
+
+            // When opening add-class modal, load buildings (existing modal open code should still run)
+            if (addClassBtn) {
+                addClassBtn.addEventListener('click', function() {
+                    loadBuildings();
+                });
+            }
+
+            // Optionally, if modal is opened for edit you should call loadBuildings(existingBuildingId) then set room
+        });
+    </script>
 
 </body>
 
