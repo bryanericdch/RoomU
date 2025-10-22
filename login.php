@@ -90,7 +90,7 @@ if (isset($_POST['login'])) {
                         <input class="login-button" type="submit" value="Login" name="login">
                     </div>
                     <div class="w-auto flex justify-center mt-[30px] text-roomu-white font-semibold text-[30px]">
-                        <a href="/student/student_dashboard.php" class="bg-roomu-black login-button">Login as Student</a>
+                        <a href="/student/student_dashboard.php" class="bg-roomu-black login-button text-center pt-1">Login as Student</a>
                     </div>
 
                 </form>

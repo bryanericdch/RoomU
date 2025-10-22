@@ -33,7 +33,8 @@ if (isset($_POST['register'])) {
         }
 
         if ($reg->execute()) {
-            echo "<p style='color:green;'>Registration Successful!</p>";
+            header("Location: admin_management.php?success=1");
+            exit();
         } else {
             echo "<p style='color:red;'>Registration Failed.</p>";
         }
@@ -46,27 +47,32 @@ if (isset($_POST['register'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/assets/css/output.css">
     <title>Registration Page</title>
 </head>
 
-<body>
-    <form method="post">
-        <input type="text" name="full_name" placeholder="Enter Name" required><br>
-        <input type="email" name="email" placeholder="Enter Email" required><br>
-        <input type="password" name="password_hash" placeholder="Enter Password" required><br>
-        <select name="role" required>
+<body class="flex h-screen max-w-full items-center justify-center bg-roomu-green">
+    <form method="post" class="w-[500px] rounded-md flex flex-col px-8 py-10 justify-between bg-roomu-white">
+        <label for="name" class="font-semibold text-[24px] ml-[5px] select-none ">Name</label>
+        <input type="text" name="full_name" id="name" required class="bg-white h-[54px] rounded-[15px] px-[20px] focus:outline-0 select-none shadow-input-box"><br>
+
+        <label for="email" class="font-semibold text-[24px] ml-[5px] select-none ">Email</label>
+        <input type="email" name="email" id="email" class="bg-white h-[54px] rounded-[15px] px-[20px] focus:outline-0 select-none shadow-input-box" required><br>
+
+        <label for="pass" class="font-semibold text-[24px] ml-[5px] select-none ">Password</label>
+        <input type="password" name="password_hash" id="pass" required class="bg-white h-[54px] rounded-[15px] px-[20px] focus:outline-0 select-none shadow-input-box"><br>
+        <select name="role" required class="hidden">
             <option value="instructor" selected>Instructor</option>
         </select><br>
 
         <?php if ($department_id): ?>
             <input type="hidden" name="department_id" value="<?= htmlspecialchars($department_id) ?>">
-            <p>Assigning to Department ID: <strong><?= htmlspecialchars($department_id) ?></strong></p>
+            <p class="hidden">Assigning to Department ID: <strong><?= htmlspecialchars($department_id) ?></strong></p>
         <?php endif; ?>
 
-        <button name="register">Register</button>
-        <a href="admin_management.php">Back</a>
+        <button name="register" class="bg-roomu-green text-roomu-white text-2xl py-4 rounded-md cursor-pointer hover:bg-hover-roomu-green font-semibold">Register</button>
+        <a href="admin_management.php" class="mt-3">Back</a>
     </form>
-
 </body>
 
 </html>
