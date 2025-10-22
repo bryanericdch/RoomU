@@ -1,11 +1,12 @@
 @import "tailwindcss";
 
 .bg-custom {
-  background-image: url('/assets/img/ClassroomVBg.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    background-image: url('/assets/img/ClassroomVBg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
+
 @theme {
     --color-body: #ECF2F8;
     --font-inter: "Inter", sans-serif;
@@ -16,6 +17,8 @@
     --shadow-image-login: inset 0 0 50px 70px rgb(0 0 0 / 50%);
     --shadow-input-box: 0 0 50px 1px rgb(0 0 0 / 10%);
     --shadow-container: 0 0 10px 0 rgb(0 0 0 /20%);
+
+
 }
 
 @layer base {
