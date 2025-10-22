@@ -101,9 +101,10 @@ $classesResult = $conn->query("
     INNER JOIN sections s ON c.section_id = s.section_id
     INNER JOIN subjects sub ON c.subject_id = sub.subject_id
     INNER JOIN users u ON c.instructor_id = u.user_id
-    WHERE c.instructor_id = $userId
+    WHERE ci.room_id IS NOT NULL
 ");
 
+// Initialize classesByRoom array
 $classesByRoom = [];
 while ($row = $classesResult->fetch_assoc()) {
     if ($row['room_id']) { // only include if assigned to a room
@@ -151,7 +152,7 @@ $email = $user['email'];
         </section>
 
         <!--Date and Time-->
-        <section class="absolute left-89 h-full flex items-center gap-x-6">
+        <section class="absolute left-89 h-full flex items-center w-[300px] justify-between">
             <div class="text-roomu-white font-bold text-[36px] whitespace-nowrap" id="current-time">11:11 AM</div>
             <div class="text-roomu-white flex flex-col font-bold text-[16px]">
                 <div id="current-day">Sunday</div>

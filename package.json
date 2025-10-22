@@ -11,10 +11,10 @@
   "license": "ISC",
   "description": "**Room-U** is a web-based system designed to help schools manage classroom availability, schedules, and occupancy efficiently.  \r It enables **admins**, **instructors**, and **students** to track and manage rooms in real-time, minimizing scheduling conflicts and ensuring smoother classroom operations.",
   "dependencies": {
-    "@tailwindcss/cli": "^4.1.14"
+    "@tailwindcss/cli": "^4.1.15"
   },
   "keywords": [],
   "devDependencies": {
-    "tailwindcss": "^4.1.14"
+    "tailwindcss": "^4.1.15"
   }
 }

@@ -428,7 +428,7 @@ $departments = $conn->query("SELECT department_id, name FROM departments ORDER B
 
 
                 <!-- List Rooms/Instructors -->
-                <section class="bg-roomu-white shadow-md rounded-lg p-4 w-[500px] h-[40vh] overflow-y-auto">
+                <section class="bg-roomu-white shadow-md rounded-lg p-4 w-[500px] h-[60vh] overflow-y-auto">
                     <div class="flex justify-between items-center mb-3">
                         <h2 id="details-title" class="text-lg font-semibold">Select A Building</h2>
                         <button id="add-sub-btn"
