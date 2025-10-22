@@ -28,18 +28,15 @@ Room-U aims to:
 - Create, edit, and remove courses, subjects, and sections.
 - View and track room availability.
 - Check-in to a room for a scheduled class (automatically checks out when the class ends).
-- View their own active and past check-ins.
 
 ### 🎓 Student
 - View real-time room availability and statuses (read-only).
-- Authenticate to access the system securely.
 
 ---
 
 ## 🕒 Real-Time Features
 
 - **Automatic Check-Out:** When the current time meets the class’s scheduled end time, the system auto-checks out the room and marks it as available again.
-- **5-Minute Grace Period:** A built-in allowance ensures minor schedule deviations don’t cause conflicts.
 - **Real-Time Clock Integration:** The system syncs with the current time (based on `Asia/Manila` timezone).
 
 ---
