@@ -1,3 +1,33 @@
+<?php
+session_start();
+include 'database/roomdb.php';
+
+if (isset($_POST['login'])) {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $check = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $check->bind_param("s", $email);
+    $check->execute();
+    $result = $check->get_result();
+
+    if ($result->num_rows === 1) {
+        $row = $result->fetch_assoc();
+
+        if (password_verify($password, $row['password_hash'])) {
+            $_SESSION['user_id'] = $row['user_id'];
+            $_SESSION['role'] = $row['role'];
+
+            if ($_SESSION['role'] === 'admin') {
+                header('location: admin/admin_dashboard.php');
+            } elseif ($_SESSION['role'] === 'instructor') {
+                header('location: instructor/instructor_dashboard.php');
+            }
+            exit();
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,7 +67,7 @@
         <div class="flex flex-col w-[350px] h-full mt-[30px] items-center  relative">
 
             <div class="w-[90%] h-[75.5%]  absolute top-20">
-                <form class="flex flex-col justify-between h-[200px]" action="/admin/admin_dashboard.html">
+                <form method="post" class="flex flex-col justify-between h-[200px]">
 
                     <div class="flex flex-col font-inter  text-roomu-black mb-[20px]">
                         <label class="font-semibold text-[24px] ml-[5px] select-none" for="email">Email</label>
@@ -53,15 +83,14 @@
                     </div>
 
                     <div class="flex justify-end font-inter text-roomu-black  text-[15px] mt-[5px]">
-                        Forgot password?
+                        <a href="forgot_password.php"> Forgot password? </a>
                     </div>
 
                     <div class="w-auto flex justify-center mt-[30px] text-roomu-white font-semibold text-[30px]">
-                        <input class="login-button" type="submit" value="Login">
+                        <input class="login-button" type="submit" value="Login" name="login">
                     </div>
-
                     <div class="w-auto flex justify-center mt-[30px] text-roomu-white font-semibold text-[30px]">
-                        <input class="bg-roomu-black login-button" type="submit" value="Login as Student">
+                        <a href="/student/student_dashboard.php" class="bg-roomu-black login-button">Login as Student</a>
                     </div>
 
                 </form>

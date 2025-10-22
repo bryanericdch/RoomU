@@ -71,12 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = 'p-2 border rounded flex justify-between items-center';
             if (selectedCourse === c.id) li.classList.add('bg-roomu-green/10');
             li.innerHTML = `
-            <span class="cursor-pointer">${esc(c.name)}</span>
-            <div class="flex gap-2">
-                <button data-id="${c.id}" data-act="edit" class="text-sm text-blue-500 cursor-pointer">Edit</button>
-                <button data-id="${c.id}" data-act="del" class="text-sm text-red-500 cursor-pointer">Delete</button>
-            </div>
-        `;
+                <span class="cursor-pointer">${esc(c.name)}</span>
+                <div class="flex gap-2">
+                    <button data-id="${c.id}" data-act="edit" class="text-sm text-blue-500 cursor-pointer">Edit</button>
+                    <button data-id="${c.id}" data-act="del" class="text-sm text-red-500 cursor-pointer">Delete</button>
+                </div>
+            `;
 
             li.addEventListener('click', async (e) => {
                 if (e.target.closest('button')) return;
@@ -130,21 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             coursesEl.appendChild(li);
         });
-        // Add scrolling to courses list
-        coursesEl.style.maxHeight = '550px';
-        coursesEl.style.overflowY = 'auto';
     }
 
     function renderSections() {
         sectionsEl.innerHTML = '';
-        const course = data.courses.find(c => c.id === selectedCourse);
 
-        if (!course) {
+        if (!selectedCourse) {
             sectionsEl.innerHTML = '<li class="p-2 text-gray-500 italic">Select a course</li>';
             return;
         }
 
-        if (!course.sections.length) {
+        const course = data.courses.find(c => c.id === selectedCourse);
+        if (!course || !course.sections.length) {
             sectionsEl.innerHTML = '<li class="p-2 text-gray-500 italic">No sections</li>';
             return;
         }
@@ -154,18 +151,20 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = 'p-2 border rounded flex justify-between items-center cursor-pointer';
             if (selectedSection === s.id) li.classList.add('bg-roomu-green/10');
 
-            li.innerHTML = `<span class="flex-1 cursor-pointer">${esc(s.name)}</span>
-        <div class="flex gap-2">
-            <button data-id="${s.id}" data-act="edit" class="text-sm text-blue-500 cursor-pointer">Edit</button>
-            <button data-id="${s.id}" data-act="del" class="text-sm text-red-500 cursor-pointer">Delete</button>
-        </div>`;
+            li.innerHTML = `
+            <span class="flex-1">${esc(s.name)}</span>
+            <div class="flex gap-2">
+                <button data-act="edit" class="text-sm text-blue-500 cursor-pointer">Edit</button>
+                <button data-act="del" class="text-sm text-red-500 cursor-pointer">Delete</button>
+            </div>
+        `;
 
-            li.addEventListener('click', async (e) => {
-                if (e.target.closest('button')) return;
+            // Click on the entire li to select section
+            li.addEventListener('click', (e) => {
+                if (e.target.closest('button')) return; // ignore clicks on Edit/Delete
                 selectedSection = s.id;
                 addClassBtn.disabled = false;
-                renderClasses();
-                renderSections();
+                renderAll(); // refresh sections & classes
             });
 
             // Edit section
@@ -189,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             section_id: s.id
                         })
                     });
+
                     const dataRes = await res.json();
                     if (dataRes.success) {
                         alert('Section deleted successfully.');
@@ -198,153 +198,23 @@ document.addEventListener('DOMContentLoaded', () => {
                         alert(dataRes.message || 'Failed to delete section.');
                     }
                 } catch (err) {
-                    console.error('Error deleting section:', err);
+                    console.error(err);
                     alert('Error connecting to server.');
                 }
             });
 
             sectionsEl.appendChild(li);
         });
-        // Add scrolling
-        sectionsEl.style.maxHeight = '550px';
-        sectionsEl.style.overflowY = 'auto';
     }
 
-    // Convert HH:MM:SS to 12-hour AM/PM format
-    function formatTime(t) {
-        if (!t) return '';
-        const [h, m] = t.split(':');
-        const hour = parseInt(h, 10);
-        const ampm = hour >= 12 ? 'PM' : 'AM';
-        const hour12 = hour % 12 || 12;
-        return `${hour12}:${m} ${ampm}`;
-    }
-
-    function renderClasses() {
-        classesEl.innerHTML = '';
-
-        if (!selectedSection) {
-            classesEl.innerHTML = '<li class="p-2 text-gray-500 italic">Select a section</li>';
-            return;
-        }
-
-        const course = data.courses.find(c => c.id === selectedCourse);
-        if (!course) return;
-
-        const section = course.sections.find(s => s.id === selectedSection);
-        if (!section) return;
-
-        if (!section.classes || !section.classes.length) {
-            classesEl.innerHTML = '<li class="p-2 text-gray-500 italic">No classes</li>';
-            return;
-        }
-
-        section.classes.forEach(cls => {
-            const li = document.createElement('li');
-            li.className = 'p-2 border rounded flex justify-between items-center bg-white shadow-sm';
-            li.innerHTML = `
-            <div>
-                <span>
-                    ${esc(cls.name)}
-                    ${cls.room_name ? ` - ${esc(cls.room_name)}` : ''} (${cls.status})
-                </span>
-                <div class="text-gray-500 text-sm mt-1">
-                    ${formatTime(cls.schedule_start)} - ${formatTime(cls.schedule_end)}
-                </div>
-            </div>
-            <div class="flex gap-2 items-center">
-                <label class="flex items-center gap-1">
-                    <button class="maintenance-btn" data-class-id="${cls.class_id}">
-                        ${cls.status === 'maintenance' ? 'Under Maintenance' : 'Mark as Maintenance'}
-                    </button>
-                </label>
-                <button data-act="del" class="text-sm text-red-500 cursor-pointer">Del</button>
-            </div>
-        `;
-
-
-            // Maintenance button
-            li.querySelector('.maintenance-btn').addEventListener('click', async (e) => {
-                const classId = e.target.dataset.classId;
-                const course = data.courses.find(c => c.id === selectedCourse);
-                const section = course.sections.find(s => s.id === selectedSection);
-                const cls = section.classes.find(c => c.class_id == classId);
-
-                const isMaintenance = cls.status === 'maintenance';
-                const actionText = isMaintenance
-                    ? 'Remove this class from maintenance?'
-                    : 'Turn this class into maintenance?';
-
-                if (!confirm(actionText)) return;
-
-                const newStatus = cls.status === 'maintenance' ? 'available' : 'maintenance';
-
-                try {
-                    const res = await fetch('/instructor/instructor_classes.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            action: 'update_class_status',
-                            class_id: cls.class_id,
-                            status: newStatus
-                        })
-                    });
-
-                    const dataRes = await res.json();
-                    if (dataRes.success) {
-                        cls.status = newStatus;
-                        renderClasses();
-                    } else {
-                        alert(dataRes.message || 'Failed to update status.');
-                    }
-                } catch (err) {
-                    console.error('Error updating status:', err);
-                    alert('Error connecting to server.');
-                }
-            });
-
-            // Delete class
-            li.querySelector('[data-act="del"]').addEventListener('click', async (e) => {
-                e.stopPropagation();
-                if (!confirm(`Delete class "${cls.name}"?`)) return;
-
-                try {
-                    const res = await fetch('/instructor/instructor_classes.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            action: 'delete_class',
-                            class_id: cls.class_id,
-                            room_id: cls.room_id // send the room id to mark it available
-                        })
-                    });
-
-                    const dataRes = await res.json();
-                    if (dataRes.success) {
-                        alert('Class deleted successfully.');
-                        section.classes = section.classes.filter(c => c.class_id !== cls.class_id);
-                        renderClasses();
-                    } else {
-                        alert(dataRes.message || 'Failed to delete class.');
-                    }
-                } catch (err) {
-                    console.error(err);
-                    alert('Error connecting to server.');
-                }
-            });
-
-            classesEl.appendChild(li);
-        });
-        // Add scrolling
-        classesEl.style.maxHeight = '550px';
-        classesEl.style.overflowY = 'auto';
-    }
 
     function renderAll() {
         renderCourses();
         renderSections();
         renderClasses();
     }
+
+
 
     // Course modal logic
     addCourseBtn.addEventListener('click', () => openCourseModal('add'));
@@ -454,11 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: new URLSearchParams({
                         action: 'edit_section',
                         section_id: editingSectionId,
-                        section_name: name
+                        name
                     })
                 });
             }
-
 
             const dataRes = await res.json();
             if (dataRes.success) {
@@ -517,11 +386,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     schedule_start: cls.schedule_start,
                     schedule_end: cls.schedule_end,
                     checkin_grace_minutes: cls.checkin_grace_minutes,
-                    status: cls.status,
-                    room_id: cls.room_id,
-                    room_name: cls.room_name,
-                    room_status: cls.status
-
+                    status: cls.status || 'available',
+                    room_id: cls.room_id
                 }));
 
             }
@@ -578,24 +444,21 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/instructor/instructor_classes.php?fetch=available_rooms');
             const rooms = await res.json();
 
-            roomSelect.innerHTML = '';
+            roomSelect.innerHTML = ''; // clear old options
 
             if (!rooms.length) {
-                roomSelect.innerHTML = '<option value="">No rooms available</option>';
+                roomSelect.innerHTML = '<option value="">No available rooms</option>';
                 return;
             }
 
-            roomSelect.innerHTML = rooms.map(r => {
-                const disabled = r.status === 'checkedin' ? 'disabled' : '';
-                const displayStatus = r.status === 'checkedin' ? 'Checked In' : 'Available';
-                return `<option value="${r.room_id}" ${disabled}>${r.room_name} (${displayStatus})</option>`;
-            }).join('');
+            roomSelect.innerHTML = rooms.map(r =>
+                `<option value="${r.room_id}">${r.room_name} (${r.status})</option>`
+            ).join('');
         } catch (err) {
             console.error('Error loading rooms:', err);
             roomSelect.innerHTML = '<option value="">Error loading rooms</option>';
         }
     }
-
 
 
 
@@ -665,3 +528,41 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCourses();
     renderAll();
 });
+
+// Step 3: If maintenance, remove the class schedule times
+if ($status === 'maintenance') {
+
+    // Update room status to maintenance
+    $stmt = $conn -> prepare("UPDATE rooms SET status = 'maintenance' WHERE room_id = ?");
+    $stmt -> bind_param("i", $room_id);
+    $stmt -> execute();
+    $stmt -> close();
+
+    // Set schedule times to 00:00:00 (valid time)
+    $stmt2 = $conn -> prepare("
+        UPDATE classes 
+        SET schedule_start = '00:00:00',
+        schedule_end = '00:00:00'
+        WHERE class_id = ?
+        ");
+        $stmt2 -> bind_param("i", $class_id);
+    $stmt2 -> execute();
+    $stmt2 -> close();
+}
+    echo json_encode(['success' => $ok, 'room_id' => $room_id]);
+exit;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+//  "C:\xampp\php\php.exe" -S localhost:8000 -t "C:\xampp\htdocs\Room" 
