@@ -187,6 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     else alert('Failed to delete room.');
                 } catch (err) { console.error(err); }
             }
+            if (button.classList.contains('maintenance-room')) {
+                if (!confirm('Toggle Maintenance?')) return;
+
+                try {
+                    const res = await fetch('/admin/admin_management.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: new URLSearchParams({
+                            mode: 'maintenance_room',
+                            id
+                        })
+                    });
+                    const data = await res.json();
+                    if (data.success) loadRooms(selectedBuildingId);
+                    else alert('Failed to update room status.');
+                } catch (err) {
+                    console.error(err);
+                }
+            }
         }
 
         // --- Instructors ---
@@ -329,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.innerHTML = `
                     <span>${room.name} <small class="text-gray-500">(${room.status})</small></span>
                     <div class="flex gap-2">
+                    <button class="maintenance-room text-yellow-500 hover:underline">Maintenance</button>
                         <button class="edit-room text-blue-500 hover:underline">Edit</button>
                         <button class="remove-room text-red-500 hover:underline">Remove</button>
                     </div>
