@@ -162,3 +162,35 @@ ALTER TABLE classes
   ALTER TABLE sections
 ADD COLUMN instructor_id INT NOT NULL,
 ADD FOREIGN KEY (instructor_id) REFERENCES users(user_id) ON DELETE CASCADE;
+
+
+ALTER TABLE courses ADD COLUMN instructor_id INT;
+
+
+ALTER TABLE courses ADD CONSTRAINT fk_instructor FOREIGN KEY (instructor_id) REFERENCES users(user_id);
+
+
+ALTER TABLE courses
+ADD COLUMN owner_id INT NOT NULL AFTER course_id;
+
+
+ALTER TABLE courses
+ADD CONSTRAINT fk_owner_user
+FOREIGN KEY (owner_id)
+REFERENCES users(user_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
+ALTER TABLE sections
+ADD COLUMN instructor_id INT NOT NULL AFTER section_name;
+
+
+ALTER TABLE sections
+ADD CONSTRAINT fk_sections_instructor
+FOREIGN KEY (instructor_id)
+REFERENCES users(user_id)
+ON DELETE CASCADE
+ON UPDATE CASCADE;
+
+
