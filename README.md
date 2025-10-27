@@ -9,7 +9,7 @@ It enables **admins**, **instructors**, and **students** to track and manage roo
 ## 🚀 Project Overview
 
 Room-U aims to:
-- Resolve room conflicts and overlapping schedules.
+- Ease room conflicts and overlapping schedules.
 - Allow instructors and admins to monitor room occupancy and availability in real time.
 - Automate room status updates based on class schedules.
 - Provide an easy-to-use dashboard for tracking building and department statistics.
