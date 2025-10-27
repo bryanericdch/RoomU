@@ -114,6 +114,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['mode'])) {
         exit();
     }
 
+    // --- TOGGLE MAINTENANCE MODE ---
+    if ($mode === 'maintenance_room' && $id) {
+        $stmt = $conn->prepare("SELECT status FROM rooms WHERE room_id = ? LIMIT 1");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+
+        if ($res && $res->num_rows > 0) {
+            $row = $res->fetch_assoc();
+            $newStatus = ($row['status'] === 'maintenance') ? 'available' : 'maintenance';
+
+            $stmtUpdate = $conn->prepare("UPDATE rooms SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE room_id = ?");
+            $stmtUpdate->bind_param("si", $newStatus, $id);
+            $stmtUpdate->execute();
+
+            echo json_encode(['success' => true, 'status' => $newStatus]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Room not found']);
+        }
+        exit();
+    }
+
     if ($mode === 'edit_instructor' && isset($_POST['full_name'], $_POST['id'])) {
         $full_name = trim($_POST['full_name']);
         $id = intval($_POST['id']);
@@ -265,6 +287,50 @@ $email = $user['email'];
 // Fetch buildings & departments
 $buildings = $conn->query("SELECT building_id, name FROM buildings ORDER BY name ASC")->fetch_all(MYSQLI_ASSOC);
 $departments = $conn->query("SELECT department_id, name FROM departments ORDER BY name ASC")->fetch_all(MYSQLI_ASSOC);
+
+// --- Auto-update Room Status based on current time ---
+date_default_timezone_set('Asia/Manila');
+$currentTime = date("H:i:s");
+
+$rooms = $conn->query("SELECT room_id, status FROM rooms");
+
+while ($room = $rooms->fetch_assoc()) {
+    $roomId = $room['room_id'];
+
+    if ($room['status'] === 'maintenance') continue;
+
+    $stmt = $conn->prepare("
+        SELECT c.schedule_start, c.schedule_end
+        FROM checkins ch
+        INNER JOIN classes c ON c.class_id = ch.class_id
+        WHERE ch.room_id = ? AND ch.status = 'active'
+    ");
+    $stmt->bind_param("i", $roomId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $isOccupied = false;
+
+    while ($class = $result->fetch_assoc()) {
+        $startTime = strtotime($class['schedule_start']);
+        $endTime   = strtotime($class['schedule_end']);
+        $current   = strtotime($currentTime);
+
+        if ($current >= $startTime && $current <= $endTime) {
+            $isOccupied = true;
+            break;
+        }
+    }
+
+    $newStatus = $isOccupied ? 'occupied' : 'available';
+
+    if ($room['status'] !== $newStatus) {
+        $stmtUpdate = $conn->prepare("UPDATE rooms SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE room_id = ?");
+        $stmtUpdate->bind_param("si", $newStatus, $roomId);
+        $stmtUpdate->execute();
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

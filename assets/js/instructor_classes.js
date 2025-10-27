@@ -253,55 +253,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             </div>
             <div class="flex gap-2 items-center">
-                <label class="flex items-center gap-1">
-                    <button class="maintenance-btn" data-class-id="${cls.class_id}">
-                        ${cls.status === 'maintenance' ? 'Under Maintenance' : 'Mark as Maintenance'}
-                    </button>
-                </label>
+                
                 <button data-act="del" class="text-sm text-red-500 cursor-pointer">Del</button>
             </div>
         `;
 
 
-            // Maintenance button
-            li.querySelector('.maintenance-btn').addEventListener('click', async (e) => {
-                const classId = e.target.dataset.classId;
-                const course = data.courses.find(c => c.id === selectedCourse);
-                const section = course.sections.find(s => s.id === selectedSection);
-                const cls = section.classes.find(c => c.class_id == classId);
 
-                const isMaintenance = cls.status === 'maintenance';
-                const actionText = isMaintenance
-                    ? 'Remove this class from maintenance?'
-                    : 'Turn this class into maintenance?';
-
-                if (!confirm(actionText)) return;
-
-                const newStatus = cls.status === 'maintenance' ? 'available' : 'maintenance';
-
-                try {
-                    const res = await fetch('/instructor/instructor_classes.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                        body: new URLSearchParams({
-                            action: 'update_class_status',
-                            class_id: cls.class_id,
-                            status: newStatus
-                        })
-                    });
-
-                    const dataRes = await res.json();
-                    if (dataRes.success) {
-                        cls.status = newStatus;
-                        renderClasses();
-                    } else {
-                        alert(dataRes.message || 'Failed to update status.');
-                    }
-                } catch (err) {
-                    console.error('Error updating status:', err);
-                    alert('Error connecting to server.');
-                }
-            });
 
             // Delete class
             li.querySelector('[data-act="del"]').addEventListener('click', async (e) => {
