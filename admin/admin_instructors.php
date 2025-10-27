@@ -273,10 +273,10 @@ if ($mode === 'change_password') {
             <section class="w-[70%] h-full items-center justify-around flex flex-col">
                 <div id="instructors-section"
                     class="col-span-1 shadow-container rounded-lg p-6 w-full h-[80%] flex flex-col overflow-hidden">
-                    <div class="flex justify-between text-roomu-black font-bold border-b border-gray-200 pb-2 mb-3">
+                    <div class="flex justify-between text-center text-roomu-black font-bold border-b border-gray-200 pb-2 mb-3">
                         <div class="w-1/4">Instructors</div>
-                        <div class="w-1/5">Room No.</div>
-                        <div class="w-2/1">Class</div>
+                        <div class="w-1/4">Room No.</div>
+                        <div class="w-1/4">Class</div>
                         <div class="w-1/4 text-center">Schedule</div>
                     </div>
 
