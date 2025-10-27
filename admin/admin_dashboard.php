@@ -79,6 +79,8 @@ $currentTime = date('H:i:s');
 
 foreach ($roomsByBuilding as $buildingId => &$rooms) {
     foreach ($rooms as &$room) {
+        // Skip rooms that are under maintenance
+        if ($room['status'] === 'maintenance') continue;
         $roomId = $room['room_id'];
         $status = 'available';
 
