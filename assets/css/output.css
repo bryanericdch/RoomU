@@ -444,26 +444,8 @@
   .w-1 {
     width: calc(var(--spacing) * 1);
   }
-  .w-1\/1 {
-    width: calc(1/1 * 100%);
-  }
-  .w-1\/2 {
-    width: calc(1/2 * 100%);
-  }
-  .w-1\/3 {
-    width: calc(1/3 * 100%);
-  }
   .w-1\/4 {
     width: calc(1/4 * 100%);
-  }
-  .w-1\/5 {
-    width: calc(1/5 * 100%);
-  }
-  .w-2 {
-    width: calc(var(--spacing) * 2);
-  }
-  .w-2\/1 {
-    width: calc(2/1 * 100%);
   }
   .w-3 {
     width: calc(var(--spacing) * 3);
@@ -753,6 +735,9 @@
   }
   .bg-gray-100 {
     background-color: var(--color-gray-100);
+  }
+  .bg-gray-500 {
+    background-color: var(--color-gray-500);
   }
   .bg-gray-900 {
     background-color: var(--color-gray-900);
@@ -1139,6 +1124,13 @@
       }
     }
   }
+  .hover\:bg-red-500 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-500);
+      }
+    }
+  }
   .hover\:bg-roomu-green {
     &:hover {
       @media (hover: hover) {
@@ -1179,6 +1171,11 @@
       @media (hover: hover) {
         opacity: 90%;
       }
+    }
+  }
+  .focus\:bg-hover-roomu-green {
+    &:focus {
+      background-color: var(--color-hover-roomu-green);
     }
   }
   .focus\:ring {
