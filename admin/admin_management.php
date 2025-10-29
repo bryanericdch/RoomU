@@ -467,7 +467,7 @@ while ($room = $rooms->fetch_assoc()) {
 
                     <ul id="list-container" class="space-y-2">
                         <?php foreach ($buildings as $b): ?>
-                            <li data-id="<?php echo $b['building_id']; ?>" class="p-3 border rounded-md hover:bg-gray-50 cursor-pointer flex justify-between items-center">
+                            <li data-id="<?php echo $b['building_id']; ?>" class="p-3 border rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center">
                                 <span><?php echo htmlspecialchars($b['name']); ?></span>
                                 <div class="flex gap-2">
                                     <button class="edit-btn text-blue-500 hover:underline">Edit</button>
@@ -498,7 +498,7 @@ while ($room = $rooms->fetch_assoc()) {
                     <div class="flex justify-between items-center mb-3">
                         <h2 id="details-title" class="text-lg font-semibold">Select A Building</h2>
                         <button id="add-sub-btn"
-                            class="bg-roomu-green text-white px-4 py-2 rounded-md hover:bg-hover-roomu-green transition">
+                            class="bg-roomu-green text-white px-4 py-2 rounded-md hover:bg-hover-roomu-green transition cursor-pointer">
                             + Add Room
                         </button>
                     </div>

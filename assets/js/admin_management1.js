@@ -128,12 +128,12 @@ document.addEventListener('DOMContentLoaded', () => {
             data.items.forEach(item => {
                 const li = document.createElement('li');
                 li.dataset.id = item.id;
-                li.className = 'p-3 border rounded-md flex justify-between items-center mb-2 cursor-pointer hover:bg-gray-50';
+                li.className = 'p-3 border rounded-md flex justify-between items-center mb-2 cursor-pointer hover:bg-hover-roomu-green';
                 li.innerHTML = `
                     <span>${item.name}</span>
                     <div class="flex gap-2">
-                        <button class="edit-btn text-blue-500 hover:underline">Edit</button>
-                        <button class="remove-btn text-red-500 hover:underline">Remove</button>
+                        <button class="edit-btn text-blue-500 hover:underline cursor-pointer">Edit</button>
+                        <button class="remove-btn text-red-500 hover:underline cursor-pointer">Remove</button>
                     </div>
                 `;
                 listContainer.appendChild(li);
@@ -259,8 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Click on name to show sublist
         if (!e.target.classList.contains('edit-btn') && !e.target.classList.contains('remove-btn')) {
-            listContainer.querySelectorAll('li').forEach(el => el.classList.remove('bg-gray-100'));
-            li.classList.add('bg-gray-100');
+            listContainer.querySelectorAll('li').forEach(el => el.classList.remove('bg-roomu-green'));
+            listContainer.querySelectorAll('li').forEach(el => el.classList.remove('text-roomu-white'));
+            li.classList.add('bg-roomu-green');
+            li.classList.add('text-roomu-white');
 
             if (currentTab === 'buildings') {
                 selectedBuildingId = id;
@@ -348,9 +350,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 li.innerHTML = `
                     <span>${room.name} <small class="text-gray-500">(${room.status})</small></span>
                     <div class="flex gap-2">
-                    <button class="maintenance-room text-yellow-500 hover:underline">Maintenance</button>
-                        <button class="edit-room text-blue-500 hover:underline">Edit</button>
-                        <button class="remove-room text-red-500 hover:underline">Remove</button>
+                    <button class="maintenance-room text-yellow-500 hover:underline cursor-pointer">Maintenance</button>
+                        <button class="edit-room text-blue-500 hover:underline cursor-pointer">Edit</button>
+                        <button class="remove-room text-red-500 hover:underline cursor-pointer">Remove</button>
                     </div>
                 `;
                 detailsContainer.appendChild(li);
