@@ -173,7 +173,7 @@ foreach ($roomsByBuilding as $buildingId => &$rooms) {
                         class="w-full bg-roomu-green text-roomu-white py-2 px-3 rounded-md hover:bg-hover-roomu-green">Change
                         Password</button>
                     <a href="/logout.php" id="logout-btn"
-                        class="w-full bg-red-500 text-white py-2 px-3 rounded-md hover:opacity-90">Logout</a>
+                        class="w-full bg-red-500 text-white py-2 px-3 rounded-md hover:opacity-90 text-center">Logout</a>
                 </div>
 
                 <form id="change-password-form" class="mt-6 space-y-3 hidden" autocomplete="off">
