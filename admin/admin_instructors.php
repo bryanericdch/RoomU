@@ -245,7 +245,7 @@ if ($mode === 'change_password') {
                     <ul class="space-y-3 w-full" role="list">
                         <?php if (count($departments) > 0): ?>
                             <?php foreach ($departments as $dept): ?>
-                                <li class="p-3 bg-gray-50 rounded-md hover:bg-hover-roomu-green cursor-pointer flex justify-between items-center w-full transition duration-200 ease-in-out"
+                                <li class="p-3 bg-gray-50 rounded-md flex justify-between items-center w-full transition duration-200 ease-in-out"
                                     data-department-id="<?= $dept['department_id'] ?>" data-action="select-department">
 
                                     <a href="#" class="text-lg font-medium flex-1">
@@ -283,7 +283,7 @@ if ($mode === 'change_password') {
                     <ul id="instructors-list" class="space-y-2 overflow-y-auto flex-1">
                         <?php if (count($instructors) > 0): ?>
                             <?php foreach ($instructors as $instr): ?>
-                                <li class="flex flex-col bg-gray-50 rounded-md p-3 hover:bg-hover-roomu-green cursor-pointer">
+                                <li class="flex flex-col bg-gray-50 rounded-md p-3">
                                     <div class="flex justify-between w-full font-bold">
                                         <div class="w-1/4"><?= htmlspecialchars($instr['full_name']) ?><span style="color: gray; font-size: 12px; font-weight:300;"> &vert; <?= htmlspecialchars($instr['department_name']) ?></span></div>
                                         <div class="w-1/4 text-center">Room</div>
