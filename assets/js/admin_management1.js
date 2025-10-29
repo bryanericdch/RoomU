@@ -260,9 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Click on name to show sublist
         if (!e.target.classList.contains('edit-btn') && !e.target.classList.contains('remove-btn')) {
             listContainer.querySelectorAll('li').forEach(el => el.classList.remove('bg-roomu-green'));
-            listContainer.querySelectorAll('li').forEach(el => el.classList.remove('text-roomu-white'));
+            listContainer.querySelectorAll('li').forEach(el => el.classList.remove('text-white'));
             li.classList.add('bg-roomu-green');
-            li.classList.add('text-roomu-white');
+            li.classList.add('text-white');
 
             if (currentTab === 'buildings') {
                 selectedBuildingId = id;
@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (currentTab === 'departments') {
-            const selectedLi = document.querySelector('#list-container li.bg-gray-100');
+            const selectedLi = document.querySelector('#list-container li.bg-roomu-green');
             if (!selectedLi) return alert('Select a department first.');
             const departmentId = selectedLi.dataset.id;
             window.location.href = `/admin/registration.php?department_id=${departmentId}`;
