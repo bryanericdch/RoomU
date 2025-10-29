@@ -51,7 +51,7 @@ if (isset($_POST['register'])) {
     <title>Registration Page</title>
 </head>
 
-<body class="flex h-screen max-w-full items-center justify-center bg-roomu-green">
+<body class="flex h-screen max-w-full items-center justify-center bg-custom bg-cover bg-center">
     <form method="post" class="w-[500px] rounded-md flex flex-col px-8 py-10 justify-between bg-roomu-white">
         <label for="name" class="font-semibold text-[24px] ml-[5px] select-none ">Name</label>
         <input type="text" name="full_name" id="name" required class="bg-white h-[54px] rounded-[15px] px-[20px] focus:outline-0 select-none shadow-input-box"><br>

@@ -144,7 +144,7 @@ $buildings = $updatedBuildings;
                     <div id="account-email" class="text-sm text-gray-500">Student@example.com</div>
                 </div>
                 <div class="flex flex-col gap-3 mt-4">
-                    <a id="logout-btn" href="/login.php" class="w-full bg-red-500 text-white py-2 px-3 rounded-md hover:opacity-90">Logout</a>
+                    <a id="logout-btn" href="/login.php" class="w-full bg-red-500 text-white py-2 px-3 rounded-md hover:opacity-90 text-center">Logout</a>
                 </div>
             </div>
         </div>
